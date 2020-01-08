@@ -9,6 +9,11 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <wiringPi.h>
 #include <time.h>
+#include <termios.h>
+#include <unistd.h>
+
+#include <stdio.h>  
+#include <sys/time.h>
 
 #include "drawLandmarks.hpp"
 
@@ -30,16 +35,13 @@ using namespace std;
 using namespace cv;
 using namespace cv::face;
 
-#include <stdio.h>  
-#include <sys/time.h>    
-
 long getCurrentTime()  
 {  
    struct timeval tv;  
    gettimeofday(&tv,NULL);  
    return tv.tv_sec * 1000 + tv.tv_usec / 1000;  
 }  
-  
+
 int main(void)
 {
 	//set PWM 
@@ -88,6 +90,7 @@ int main(void)
 		cout<<"rows:"<<rows;
 		
 		start=getCurrentTime();
+		cout<<"start"<<start<<endl; 
 		
 		vector<Rect> faces; // rectangle mark for faces
 		resize(frame,dst, Size(220, 160)); //change the size of the frame
@@ -106,8 +109,7 @@ int main(void)
 		// check whether face is detected 
 		bool success = facemark->fit(dst,faces,landmarks);
 		if(success)
-		{
-			
+		{	
 			for(int i = 0; i < landmarks.size(); i++)
 			{
 				// draw face landmarks
@@ -160,8 +162,8 @@ int main(void)
 			if (duty_up < DUTY_MIN)
 				duty_up = DUTY_MIN;
 			// write to change the duty of PWM
-			pwmWrite(PWMPIN_down, duty_down);
-			pwmWrite(PWMPIN_up, duty_up);
+			pwmWrite(PWMPIN_DOWN, duty_down);
+			pwmWrite(PWMPIN_UP, duty_up);
 		    cout << "servo_up is moving with duty "<<duty_up<<endl;
 			cout << "servo_down is moving with duty "<<duty_down<<endl;	
 		}
@@ -170,10 +172,54 @@ int main(void)
 		}
 		
 		imshow("face detection",dst);
+		
 		#ifdef DEBUG
-		printf("the time of the end of processing:%ld\n",getCurrentTime()); 
+		printf("the time of the end of processing:%ld\n",getCurrentTime());
 		#endif
-		if(waitKey(10)>=0)break;
+		
+		int keyValue = waitKey(100);
+		#ifdef DEBUG
+		cout<<"keyValue = "<<(char)(keyValue)<<endl;
+		#endif
+        
+		if(keyValue=='s')
+		{
+			step_up = PWM_DUTY_STEP;
+			duty_up += step_up;
+		}
+		else if(keyValue=='w')
+		{
+			
+			step_up = PWM_DUTY_STEP * (-1);
+			duty_up += step_up;
+		}
+		else if(keyValue=='a')
+		{
+			step_down = PWM_DUTY_STEP;
+			duty_down += step_down;
+		}
+		else if(keyValue=='d')
+		{
+			step_down = PWM_DUTY_STEP * (-1);
+			duty_down += step_down;
+		}
+		else{
+			// do nothing
+		}
+		
+		if (duty_down > DUTY_MAX) 
+			duty_down = DUTY_MAX;
+		if (duty_down < DUTY_MIN)
+			duty_down = DUTY_MIN;
+		if (duty_up > DUTY_MAX)
+			duty_up = DUTY_MAX;
+		if (duty_up < DUTY_MIN)
+			duty_up = DUTY_MIN;
+		// write to change the duty of PWM
+		pwmWrite(PWMPIN_DOWN, duty_down);
+		pwmWrite(PWMPIN_UP, duty_up);
+        
+		//if(waitKey(10)>=0)break;
 		//delay(DELAY_TIME_MS);
     }
 	
