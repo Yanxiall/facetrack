@@ -12,10 +12,23 @@
 #include <termios.h>
 #include <unistd.h>
 
+
 #include <stdio.h>  
 #include <sys/time.h>
 
 #include "drawLandmarks.hpp"
+
+ 
+
+#include <unistd.h>
+#include <cstring>
+#include <string>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+using namespace std; 
+#define USEPORT 1234
 
 #define PWMPIN_DOWN 24 //GPIO.24 as the output of PWM 
 #define PWMPIN_UP 1    //GPIO.1 as the output of PWM
@@ -80,8 +93,50 @@ int main(void)
 	int rows;
 	int cols;
 	
+	
+	//create socket
+	int serverSock = socket(AF_INET, SOCK_STREAM, 0); 
+	
+	if (serverSock < 0)
+	{
+		cout << "socket creation failed" << endl; 
+		exit(-1); 
+	}
+	cout << "socket creation successfully" << endl; 
+//bind IP and port
+	struct sockaddr_in serverAddr; 
+	memset(&serverAddr, 0, sizeof(serverAddr)); 
+	serverAddr.sin_family = AF_INET; 
+	serverAddr.sin_port = htons(USEPORT); 
+	//INADDR_ANY bind all IP
+	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); 
+//bind socket
+	if (bind(serverSock, 
+		(struct sockaddr*)&serverAddr, 
+		sizeof(struct sockaddr)) == -1)
+	{
+		cout << "Bind error, Port["<< USEPORT << "]" << endl; 
+	       exit(-1); 
+    }
+	cout << "Bind successfully" << endl; 
+	
+//listen
+	if (listen(serverSock, 10) == -1)
+	{
+		cout << "Listen error!" << endl; 
+	}
+	cout << "Listening on port[" << USEPORT << "]" << endl; 
+
+//accept()
+	struct sockaddr clientAddr; 
+	int size = sizeof(struct sockaddr); 
+	int clientSock = accept(serverSock, (struct sockaddr*)&clientAddr, (socklen_t*)&size); 
+
+	cout << "****NEW client touched****" << endl; 
+		
 	while(true)
 	{
+		
 		cap>>frame;
 		//get the size of the frame
 		cols=frame.size().width;
@@ -171,34 +226,53 @@ int main(void)
 			cout<<"no face detected"<<endl;
 		}
 		
-		imshow("face detection",dst);
+		//imshow("face detection",dst);
 		
 		#ifdef DEBUG
 		printf("the time of the end of processing:%ld\n",getCurrentTime());
 		#endif
+		//if(waitKey(10)>=0)break;
+		//delay(DELAY_TIME_MS);
+	    
+//************************************************************************************		
 		
-		int keyValue = waitKey(100);
-		#ifdef DEBUG
-		cout<<"keyValue = "<<(char)(keyValue)<<endl;
-		#endif
-        
-		if(keyValue=='s')
+		cout << "wait for the message from the client.." << endl;
+		
+		char tack[255] = { 0 };
+		
+		recv(clientSock, tack, 255, 0); 
+		
+		//output the accept message
+		cout << "client: " << tack << endl;
+		
+		if (strcmp(tack, "quit") == 0)
 		{
+			cout << "shutdown" << endl; 
+			break;
+		}
+		
+		// control the camera manually
+		
+        
+		if(strcmp(tack, "s") == 0)// press the key "s", the camera moves down
+		{
+			
+			
 			step_up = PWM_DUTY_STEP;
 			duty_up += step_up;
 		}
-		else if(keyValue=='w')
+		else if(strcmp(tack, "w") == 0)// press the key "w", the camera moves up
 		{
 			
 			step_up = PWM_DUTY_STEP * (-1);
 			duty_up += step_up;
 		}
-		else if(keyValue=='a')
+		else if(strcmp(tack, "a") == 0) // press the key "a", the camera moves left
 		{
 			step_down = PWM_DUTY_STEP;
 			duty_down += step_down;
 		}
-		else if(keyValue=='d')
+		else if(strcmp(tack, "d") == 0)// press the key "d", the camera moves right
 		{
 			step_down = PWM_DUTY_STEP * (-1);
 			duty_down += step_down;
@@ -218,10 +292,10 @@ int main(void)
 		// write to change the duty of PWM
 		pwmWrite(PWMPIN_DOWN, duty_down);
 		pwmWrite(PWMPIN_UP, duty_up);
-        
-		//if(waitKey(10)>=0)break;
-		//delay(DELAY_TIME_MS);
-    }
+       	
+	    close(clientSock); 
 	
+    }
 	return 0;
+	
 }
