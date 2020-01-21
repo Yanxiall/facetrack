@@ -96,7 +96,6 @@ int main(void)
 	
 	//create socket
 	int serverSock = socket(AF_INET, SOCK_STREAM, 0); 
-	
 	if (serverSock < 0)
 	{
 		cout << "socket creation failed" << endl; 
@@ -129,14 +128,12 @@ int main(void)
 
 //accept()
 	struct sockaddr clientAddr; 
-	int size = sizeof(struct sockaddr); 
+	int size = sizeof(struct sockaddr); 	
 	int clientSock = accept(serverSock, (struct sockaddr*)&clientAddr, (socklen_t*)&size); 
-
 	cout << "****NEW client touched****" << endl; 
 		
 	while(true)
 	{
-		
 		cap>>frame;
 		//get the size of the frame
 		cols=frame.size().width;
@@ -233,17 +230,15 @@ int main(void)
 		#endif
 		//if(waitKey(10)>=0)break;
 		//delay(DELAY_TIME_MS);
-	    
 //************************************************************************************		
 		
 		cout << "wait for the message from the client.." << endl;
 		
-		char tack[255] = { 0 };
+		char tack[4] = { 0 };
 		
-		recv(clientSock, tack, 255, 0); 
-		
-		//output the accept message
-		cout << "client: " << tack << endl;
+		int receivedNum = recv(clientSock, tack, 4, MSG_DONTWAIT); 
+		cout << "receivedNum: " << receivedNum << endl;
+		cout << tack << endl;
 		
 		if (strcmp(tack, "quit") == 0)
 		{
@@ -251,13 +246,9 @@ int main(void)
 			break;
 		}
 		
-		// control the camera manually
-		
-        
+		// control the camera manually        
 		if(strcmp(tack, "s") == 0)// press the key "s", the camera moves down
 		{
-			
-			
 			step_up = PWM_DUTY_STEP;
 			duty_up += step_up;
 		}
@@ -293,7 +284,7 @@ int main(void)
 		pwmWrite(PWMPIN_DOWN, duty_down);
 		pwmWrite(PWMPIN_UP, duty_up);
        	
-	    close(clientSock); 
+	    //close(clientSock); 
 	
     }
 	return 0;
