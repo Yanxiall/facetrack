@@ -23,7 +23,7 @@ void DetectTrackFace::loadGrafic(Mat gray, Mat dst)
  
 void DetectTrackFace::FaceTrack(Step &ste)
 {
-	    
+	    cout<<"face track"<<endl;
 	    //CascadeClassifier faceDetector("../lbpcascade_frontalface.xml");
 		faceDetector.detectMultiScale(graypic, faces);
 				
