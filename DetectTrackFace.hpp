@@ -48,7 +48,7 @@ class DetectTrackFace{
 	  };
 	       
 	  void createFacemark();
-	  void FaceTrack(Step &ste);
+	  Mat FaceTrack(Step &ste);
 	  void loadGrafic(Mat gray, Mat dst);
 	
     private:

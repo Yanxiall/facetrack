@@ -7,17 +7,19 @@
 #include "drawLandmarks.hpp"
 #include "PWM_Control.hpp"
 #include "DetectTrackFace.hpp"
+#include <unistd.h>
 
 int main(void)
 {
 	//set PWM 
-	Mat frame,gray,dst;
+	Mat frame,gray,dst, img;
 	
 	DetectTrackFace d;
 	socket_rasp s;
 	PWM_Control pwmControl;
 	Step steRemote, steFace;
 	pwmControl.setPWM();
+	
 		
 	d.createFacemark();
 	
@@ -38,12 +40,11 @@ int main(void)
 		resize(frame,dst, Size(220, 160)); //change the size of the frame
 		cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
         d.loadGrafic(dst, gray);
-        d.FaceTrack(steFace);
-        s.ReceiveMessage(steRemote);
-		
+        img=d.FaceTrack(steFace);        
+        s.ReceiveMessage(steRemote);		
 		pwmControl.ControlServo(steRemote,steFace);
-		
-		
+		//send images to internet 
+		s.sendimg(img);
 	}
 	return 0;
 }

@@ -21,10 +21,9 @@ void DetectTrackFace::loadGrafic(Mat gray, Mat dst)
 	dstpic=dst;
 }
  
-void DetectTrackFace::FaceTrack(Step &ste)
+Mat DetectTrackFace::FaceTrack(Step &ste)
 {
 	    
-	    //CascadeClassifier faceDetector("../lbpcascade_frontalface.xml");
 		faceDetector.detectMultiScale(graypic, faces);
 				
 		// face marks
@@ -83,6 +82,7 @@ void DetectTrackFace::FaceTrack(Step &ste)
 			cout<<"no face detected"<<endl;
 			ste.control_active = false;
 		}
+		return dstpic;
 		//imshow("face detection",dst);
 		
 		//if(waitKey(10)>=0)break;
