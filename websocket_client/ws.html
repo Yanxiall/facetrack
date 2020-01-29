@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+
+<html>
+   <head>
+      
+      <script language="javascript" type="text/javascript">
+	     var ws;
+	     function Connect() {
+                alert(document.getElementById("ip_address").value);
+				ws = new WebSocket("ws://"+ document.getElementById("ip_address").value + ":8080/");
+				//alert("connect is pressed");
+				 //var ws = new WebSocket("ws://192.168.0.101:8080/");
+		       ws.onopen = function() {
+					  // Web Socket is connected, send data using send()
+			    
+			    alert("connection is made");
+				
+		      };
+		     
+		     ws.onmessage = function (evt) { 
+					  //alert("pic is received");
+					  document.getElementById('image').src='data:image/jpeg;charset=utf-8;base64,'+ evt.data;
+		     }
+			 
+			  ws.onclose = function() { 
+			  
+			  // websocket is closed.
+			   alert("Connection is closed..."); 
+		     };
+        
+		    
+         }
+		 
+		  function Quit() {
+                ws.send("quit");
+           }
+		 
+	     function Button_left() {
+                ws.send("a");
+		    }
+		   function Button_right() {
+                ws.send("d");
+           }
+		   function Button_up() {
+                ws.send("w");
+           }
+		   function Button_down() {
+                ws.send("s");
+           }
+          
+      </script>
+  
+   </head>
+   
+   <body>
+
+      <h1 align="center"> <font color="blue"> Remote Monitoring </font></h1>
+	 
+	  
+	  <form>
+      IP address:<br>
+      <input id="ip_address" type="text" name="ip_address" value="10.3.141.1">
+      <br>
+      <br>
+      <input type="button" value="connect" style="width:60px;height:30px"  onclick="Connect()"/>
+	  <input type="button" value="quit" style="width:60px;height:30px"  onclick="Quit()"/>
+      </form> 
+     
+	 
+	  
+	  <img id="image" src="2.png"  alt="video" style="position:relative; left:450px;" width="400" height="300"/>  
+	     <table  align="center"  class="style2">
+            <tr>
+                <td colspan="2" style="text-align: center" >
+                    <input id="btnUp" type="button" value="Up"  style="width:50px;height:30px"  onclick="Button_up()" />
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center">
+                    <input id="btnLeft" type="button" value="Left" style="width:50px;height:30px"   onclick="Button_left()" />
+                </td>
+                <td style="text-align: center">
+                    <input id="btnRight" type="button" value="Right" style="width:50px;height:30px"  onclick="Button_right()" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <input id="btnDown" type="button" value="Down" style="width:50px;height:30px"  onclick="Button_down()" />
+                </td>
+            </tr>
+        </table>     
+   </body>
+</html>
