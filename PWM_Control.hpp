@@ -26,25 +26,21 @@
 #define FACE_POSITION_THRESHOLD_Y 20
 
 class PWM_Control
-
 {	
 	public:
-
+        
 	  PWM_Control()
 	  {
-		  duty_down = (DUTY_MAX + DUTY_MIN) / 2;
-		  duty_up = (DUTY_MAX + DUTY_MIN) / 2;
-		  counter=0;
-		  
+           duty_down = (DUTY_MAX + DUTY_MIN) / 2;
+           duty_up = (DUTY_MAX + DUTY_MIN) / 2;
+		  		  
 	  };
 	  void setPWM();
 	  void ControlServo(Step remote_input, Step face_input);
 	  	  
 	private:
-      int duty_down;
+	  int duty_down;
 	  int duty_up;
-	  int counter;
 	  
 };
-
 #endif

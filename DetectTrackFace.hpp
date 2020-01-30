@@ -43,8 +43,8 @@ class DetectTrackFace{
 	public:	
 	  DetectTrackFace()
 	  {
-		  positionX = FACE_POSITION_MIDDLE_X;
-		  positionY = FACE_POSITION_MIDDLE_Y;
+		positionX = FACE_POSITION_MIDDLE_X;
+		positionY = FACE_POSITION_MIDDLE_Y;
 	  };
 	       
 	  void createFacemark();
@@ -53,7 +53,7 @@ class DetectTrackFace{
 	
     private:
   
-      Mat graypic,dstpic;
+	  Mat graypic,dstpic;
 	  Ptr<Facemark> facemark;
 	  vector<Rect> faces;
 	  CascadeClassifier faceDetector;

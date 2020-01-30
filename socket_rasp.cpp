@@ -7,8 +7,7 @@ void socket_rasp::requestInfo(SOCKET sockClient, char * request){
     //cout << recev << endl;
     string s = recev;
     int i = s.find("Sec-WebSocket-Key");
-    s = s.substr(i + 19, 24);
-   
+    s = s.substr(i + 19, 24);  
     getKey(request,s);
 }
 
@@ -41,6 +40,7 @@ void socket_rasp::getKey(char *request, string clientkey){
 void socket_rasp::respondInfo(SOCKET sockClient, char * request){
     send(sockClient, request, strlen(request), 0);
 }
+
 //server send data to client
 void socket_rasp::respondClient(SOCKET sockClient, char charb[],int length, bool finalFragment){
     int addiLen = 2;
@@ -71,7 +71,8 @@ void socket_rasp::respondClient(SOCKET sockClient, char charb[],int length, bool
         buf[2] = nuNum >> 8;
         buf[3] = length & 0xFF;
         tmp = 4;
-    }else {
+    }else 
+	{
         
         buf[1] = 127;
         buf[2] = 0;
@@ -95,12 +96,6 @@ void socket_rasp::respondClient(SOCKET sockClient, char charb[],int length, bool
 
 void socket_rasp::WorkThread(SOCKET sockClient){
     char request[1024] = "";  //request Info 
-    /*
-    char clieninfo[2048]= ""; //respond Info after handshake
-    int len = 0;              
-    int point = 0;            
-    int tmppoint = 0;         
-    */
     //handshake protocol
     requestInfo(sockClient, request);
     respondInfo(sockClient, request);
@@ -114,7 +109,7 @@ string socket_rasp::translate(SOCKET sockClient)
     int point = 0;            
     int tmppoint = 0;         
     len=recv(sockClient, clieninfo, 2048, MSG_DONTWAIT);
-    cout << "数据长度："<<len <<endl;
+
     if (len>0){
 
         char b[4096] = "";
@@ -155,7 +150,6 @@ string socket_rasp::translate(SOCKET sockClient)
                 shift += 8;
             }
         }
-
        
         if ((payloadLength != 126) || (payloadLength != 127)){
             point = 1;              
@@ -198,7 +192,6 @@ string socket_rasp::translate(SOCKET sockClient)
 
 void socket_rasp::StartServer()
 {
-	count = 0;
 	
 	//create socket
 	serverSock = socket(AF_INET, SOCK_STREAM, 0); 
@@ -235,7 +228,6 @@ void socket_rasp::StartServer()
 	int size = sizeof(struct sockaddr); 	
         clientSock = accept(serverSock, (struct sockaddr*)&clientAddr, (socklen_t*)&size); 
 	cout << "****NEW client touched****" << endl; 
-	cout << "****press any key to continue****" << endl; 
 	cout << "clientSock = " << clientSock << endl;
 	WorkThread(clientSock);
 
@@ -244,48 +236,48 @@ void socket_rasp::StartServer()
 void socket_rasp::ReceiveMessage(Step &control)
 {	
 	
-		string tack = translate(clientSock);
-		cout << "client：" << tack << endl;				
-		if (tack == "quit")
-		{
-			cout << "shutdown" << endl; 
-			exit(-1);
-		}
+	string tack = translate(clientSock);
+	cout << "client：" << tack << endl;				
+	if (tack == "quit")
+	{
+		cout << "shutdown" << endl; 
+		exit(-1);
+	}
 		
-		// control the camera manually        
-		if(tack == "s")// press the key "s", the camera moves down
-		{
-			control.step_up = 1;
-			control.step_down = 0;	
-			control.control_active = true;	
+	// control the camera manually        
+	if(tack == "s")// press the key "s", the camera moves down
+	{
+		control.step_up = 1;
+		control.step_down = 0;	
+		control.control_active = true;	
 			
-		}
-		else if(tack == "w")// press the key "w", the camera moves up
-		{
+	}
+	else if(tack == "w")// press the key "w", the camera moves up
+	{
 
-			control.step_up = -1;
-		        control.step_down = 0;			
-			control.control_active = true;	
+		control.step_up = -1;
+		control.step_down = 0;			
+		control.control_active = true;	
 			
-		}
-		else if(tack == "a") // press the key "a", the camera moves left
-		{
-			control.step_down = -1;
-			control.step_up = 0;
-			control.control_active = true;	
+	}
+	else if(tack == "a") // press the key "a", the camera moves left
+	{
+		control.step_down = -1;
+		control.step_up = 0;
+		control.control_active = true;	
 			
-		}
-		else if(tack == "d")// press the key "d", the camera moves right
-		{
-			control.step_down = 1;
-			control.step_up = 0;
-			control.control_active = true;	
+	}
+	else if(tack == "d")// press the key "d", the camera moves right
+	{
+		control.step_down = 1;
+		control.step_up = 0;
+		control.control_active = true;	
 			
-		}
-		else{
-			// do nothing
-			control.control_active = false;	
-		}		
+	}
+	else{
+		// do nothing
+		control.control_active = false;	
+	}		
 }
 
 void socket_rasp::sendimg(const cv::Mat &img)

@@ -39,7 +39,7 @@ int main(void)
 		
 		resize(frame,dst, Size(220, 160)); //change the size of the frame
 		cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
-		d.loadGrafic(dst, gray);
+		d.loadGrafic(gray,dst);
 		img=d.FaceTrack(steFace);        
 		s.ReceiveMessage(steRemote);		
 		pwmControl.ControlServo(steRemote,steFace);

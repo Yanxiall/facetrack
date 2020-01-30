@@ -41,11 +41,10 @@ class socket_rasp{
 	private:
 	  
 	   int serverSock;
-       struct sockaddr_in serverAddr; 
-       struct sockaddr clientAddr; 
-       int size;
-       int clientSock;
-	   int count;
+	   struct sockaddr_in serverAddr; 
+	   struct sockaddr clientAddr; 
+	   int size;
+	   int clientSock;
 	   base64 b64;	
 	
 };

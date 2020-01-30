@@ -20,10 +20,10 @@ void drawLandmarks(Mat &im, vector<Point2f> &landmarks)
     // Draw 68 points and outline on the face
     if (landmarks.size() == 68)
     {
-      drawPolyline(im, landmarks, 0, 16, false);           // Jaw line
-      drawPolyline(im, landmarks, 17, 21, false);          // Left eyebrow
-      drawPolyline(im, landmarks, 22, 26, false);          // Right eyebrow
-      drawPolyline(im, landmarks, 27, 30, false);          // Nose bridge
+      drawPolyline(im, landmarks, 0, 16, false);    // Jaw line
+      drawPolyline(im, landmarks, 17, 21, false);   // Left eyebrow
+      drawPolyline(im, landmarks, 22, 26, false);   // Right eyebrow
+      drawPolyline(im, landmarks, 27, 30, false);   // Nose bridge
       drawPolyline(im, landmarks, 30, 35, true);    // Lower nose
       drawPolyline(im, landmarks, 36, 41, true);    // Left eye
       drawPolyline(im, landmarks, 42, 47, true);    // Right Eye
