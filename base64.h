@@ -23,7 +23,7 @@ public:
 	~base64();
  
 	std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len);
-    std::string Mat2Base64(const cv::Mat &img, std::string imgType);
+	std::string Mat2Base64(const cv::Mat &img, std::string imgType);
 private:
  
 };

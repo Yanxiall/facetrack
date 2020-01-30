@@ -191,8 +191,7 @@ string socket_rasp::translate(SOCKET sockClient)
 }
 
 void socket_rasp::StartServer()
-{
-	
+{	
 	//create socket
 	serverSock = socket(AF_INET, SOCK_STREAM, 0); 
 	if (serverSock < 0)
@@ -214,7 +213,7 @@ void socket_rasp::StartServer()
 	{
 		cout << "Bind error, Port["<< USEPORT << "]" << endl; 
 	       exit(-1); 
-    }
+	}
 	cout << "Bind successfully" << endl; 
 	
    //listen
@@ -249,30 +248,25 @@ void socket_rasp::ReceiveMessage(Step &control)
 	{
 		control.step_up = 1;
 		control.step_down = 0;	
-		control.control_active = true;	
-			
+		control.control_active = true;				
 	}
 	else if(tack == "w")// press the key "w", the camera moves up
 	{
-
 		control.step_up = -1;
 		control.step_down = 0;			
-		control.control_active = true;	
-			
+		control.control_active = true;				
 	}
 	else if(tack == "a") // press the key "a", the camera moves left
 	{
 		control.step_down = -1;
 		control.step_up = 0;
-		control.control_active = true;	
-			
+		control.control_active = true;				
 	}
 	else if(tack == "d")// press the key "d", the camera moves right
 	{
 		control.step_down = 1;
 		control.step_up = 0;
-		control.control_active = true;	
-			
+		control.control_active = true;				
 	}
 	else{
 		// do nothing
