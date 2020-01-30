@@ -39,11 +39,11 @@ int main(void)
 		
 		resize(frame,dst, Size(220, 160)); //change the size of the frame
 		cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
-        d.loadGrafic(dst, gray);
-        img=d.FaceTrack(steFace);        
-        s.ReceiveMessage(steRemote);		
+		d.loadGrafic(dst, gray);
+		img=d.FaceTrack(steFace);        
+		s.ReceiveMessage(steRemote);		
 		pwmControl.ControlServo(steRemote,steFace);
-		//send images to internet 
+		//send images to the client 
 		s.sendimg(img);
 	}
 	return 0;
