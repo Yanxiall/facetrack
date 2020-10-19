@@ -1,10 +1,13 @@
 
 #include "DetectTrackFace.hpp"
 
-void DetectTrackFace::createFacemark(){		
+
+void DetectTrackFace::createFacemark(){
+		
 	faceDetector.load("../lbpcascade_frontalface.xml");
 	// create facemark
 	facemark = FacemarkLBF::create();
+
 	// load face detector model
 	// source: https://github.com/kurnianggoro/GSOC2017
 	facemark->loadModel("../lbfmodel.yaml");
@@ -12,16 +15,20 @@ void DetectTrackFace::createFacemark(){
 }
 
 void DetectTrackFace::loadGrafic(Mat gray, Mat dst)
-{	
+{
+	
 	graypic=gray;
 	dstpic=dst;
 }
  
  Mat DetectTrackFace::FaceTrack(Step &ste)
-{	    
-	faceDetector.detectMultiScale(graypic, faces);				
+{
+	    
+	faceDetector.detectMultiScale(graypic, faces);
+				
 	// face marks
-	vector< vector<Point2f> > landmarks;		 
+	vector< vector<Point2f> > landmarks;
+		 
 	// check whether face is detected 
 	bool success = facemark->fit(dstpic,faces,landmarks);
 	if(success)
@@ -42,10 +49,13 @@ void DetectTrackFace::loadGrafic(Mat gray, Mat dst)
 		positionY = sumy / landmarks[0].size();// the average of y coordinate of all the points of landmarks
 			
 		// the camera follows the detected first face so that the middle point of the face is in the middle of the camera 
-		if (positionX < FACE_POSITION_MIDDLE_X - FACE_POSITION_THRESHOLD_X ){			
-			ste.step_down = 1;				
+		if (positionX < FACE_POSITION_MIDDLE_X - FACE_POSITION_THRESHOLD_X ){
+			
+			ste.step_down = 1;
+				
 		}
-		else if (positionX > FACE_POSITION_MIDDLE_X + FACE_POSITION_THRESHOLD_X){		
+		else if (positionX > FACE_POSITION_MIDDLE_X + FACE_POSITION_THRESHOLD_X){
+			
 			ste.step_down = -1;
 		}
 		else 
@@ -66,7 +76,8 @@ void DetectTrackFace::loadGrafic(Mat gray, Mat dst)
 			ste.step_up = 0;	
 		}
 		
-		ste.control_active = true;			
+		ste.control_active = true;
+			
 	}
 	else 
 	{

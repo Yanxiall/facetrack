@@ -19,32 +19,54 @@ int main(void)
 	PWM_Control pwmControl;
 	Step steRemote, steFace;
 	pwmControl.setPWM();
-	
-		
+
+	unsigned char userRequest = 0; // 0: no request, 1: suspend, 2: quit
+	bool startServerSuccess = false;
+	bool startVideoSuccess = true;
+
 	d.createFacemark();
 	
-	VideoCapture cap(0);//0:call raspberry camera
-	
-	if(!cap.isOpened())
+	startServerSuccess = s.StartServer();
+
+	while(startServerSuccess)
 	{
-		cout<<"can't open this camera"<<endl;
-		return -1;
-    }	
-	
-	s.StartServer();
-	
-	while(true)
-	{   
-		cap>>frame;
+		s.listenClient();
+
+		VideoCapture cap(0);//0:call raspberry camera
+		startVideoSuccess = true;
+
+		if(!cap.isOpened())
+		{
+			cout<<"can't open this camera"<<endl;
+			startVideoSuccess = false;
+		}	
 		
-		resize(frame,dst, Size(220, 160)); //change the size of the frame
-		cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
-		d.loadGrafic(gray,dst);
-		img=d.FaceTrack(steFace);        
-		s.ReceiveMessage(steRemote);		
-		pwmControl.ControlServo(steRemote,steFace);
-		//send images to the client 
-		s.sendimg(img);
+		while(startVideoSuccess)
+		{   
+			cap>>frame;
+			
+			resize(frame,dst, Size(220, 160)); //change the size of the frame
+			cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
+			d.loadGrafic(gray,dst);
+			img=d.FaceTrack(steFace);        
+			userRequest = s.ReceiveMessage(steRemote);		
+			pwmControl.ControlServo(steRemote,steFace);
+			//send images to the client 
+			s.sendimg(img);
+
+			if (userRequest > 0) // if client request either suspend or quit
+			{
+				break;
+			}
+		}
+
+		cap.release();
+		s.closeClient();
+
+		if (userRequest == 2)
+		{
+			break;
+		}
 	}
 	return 0;
 }

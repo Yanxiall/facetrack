@@ -28,8 +28,10 @@ typedef int SOCKET;
 class socket_rasp{
 	public:
 	
-	   void StartServer();
-	   void ReceiveMessage(Step &control);
+	   bool StartServer();
+	   void closeClient();
+	   void listenClient();
+	   unsigned char ReceiveMessage(Step &control);
 	   void requestInfo(SOCKET sockClient, char * request);
 	   void getKey(char *request, string clientkey);
 	   void respondInfo(SOCKET sockClient, char * request);
@@ -41,8 +43,8 @@ class socket_rasp{
 	private:
 	  
 	   int serverSock;
-	   struct sockaddr_in serverAddr; 
-	   struct sockaddr clientAddr; 
+	   struct sockaddr_in6 serverAddr; 
+	   struct sockaddr_in6 clientAddr; 
 	   int size;
 	   int clientSock;
 	   base64 b64;	

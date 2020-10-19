@@ -190,29 +190,31 @@ string socket_rasp::translate(SOCKET sockClient)
     return "";
 }
 
-void socket_rasp::StartServer()
+bool socket_rasp::StartServer()
 {	
 	//create socket
-	serverSock = socket(AF_INET, SOCK_STREAM, 0); 
+	serverSock = socket(AF_INET6, SOCK_STREAM, 0); 
 	if (serverSock < 0)
 	{
-		cout << "socket creation failed" << endl; 
-		exit(-1); 
+		cout << "socket creation failed, retrying" << endl; 
+        usleep(5000000);
+		return false;
 	}
 	cout << "socket creation successfully" << endl; 
     //bind IP and port
 	memset(&serverAddr, 0, sizeof(serverAddr)); 
-	serverAddr.sin_family = AF_INET; 
-	serverAddr.sin_port = htons(USEPORT); 
+	serverAddr.sin6_family  = AF_INET6; 
+	serverAddr.sin6_port    = htons(USEPORT); 
 	//INADDR_ANY bind all IP
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); 
+	serverAddr.sin6_addr = in6addr_any; 
     //bind socket
 	if (bind(serverSock, 
 		(struct sockaddr*)&serverAddr, 
-		sizeof(struct sockaddr)) == -1)
+		sizeof(serverAddr)) < 0)
 	{
-		cout << "Bind error, Port["<< USEPORT << "]" << endl; 
-	       exit(-1); 
+		cout << "Bind error, retrying" << endl; 
+        usleep(5000000);
+	    return false;
 	}
 	cout << "Bind successfully" << endl; 
 	
@@ -223,16 +225,25 @@ void socket_rasp::StartServer()
 	}
 	cout << "Listening on port[" << USEPORT << "]" << endl; 
 
-    //accept()
-	int size = sizeof(struct sockaddr); 	
-        clientSock = accept(serverSock, (struct sockaddr*)&clientAddr, (socklen_t*)&size); 
+    return true;
+}
+
+void socket_rasp::listenClient()
+{
+    int size = sizeof(struct sockaddr); 	
+    clientSock = accept(serverSock, (struct sockaddr*)&clientAddr, (socklen_t*)&size); 
 	cout << "****NEW client touched****" << endl; 
 	cout << "clientSock = " << clientSock << endl;
 	WorkThread(clientSock);
-
 }
 
-void socket_rasp::ReceiveMessage(Step &control)
+void socket_rasp::closeClient()
+{
+    close(clientSock);
+    cout << "****connection is closed****" << endl; 
+}
+
+unsigned char socket_rasp::ReceiveMessage(Step &control)
 {	
 	
 	string tack = translate(clientSock);
@@ -240,7 +251,13 @@ void socket_rasp::ReceiveMessage(Step &control)
 	if (tack == "quit")
 	{
 		cout << "shutdown" << endl; 
-		exit(-1);
+		return 2; // quit, shutdown the remote monitor system
+	}
+
+    if (tack == "halt")
+	{
+		cout << "system suspended" << endl; 
+		return 1; // halt, suspend the system, can be reopened by client
 	}
 		
 	// control the camera manually        
@@ -272,6 +289,8 @@ void socket_rasp::ReceiveMessage(Step &control)
 		// do nothing
 		control.control_active = false;	
 	}		
+
+    return 0;
 }
 
 void socket_rasp::sendimg(const cv::Mat &img)
