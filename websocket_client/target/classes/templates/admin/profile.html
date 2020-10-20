@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/header::header-fragment"></head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <div th:replace="admin/header::nav-fragment"></div>
+    <div th:replace="admin/sidebar::sidebar-fragment"></div>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <!-- Small boxes (Stat box) -->
+                <div class="row">
+                    <!-- left column -->
+                    <div class="col-md-6">
+                        <!-- general form elements -->
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Base Information Modification</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <!-- form start -->
+                                <form id="NameForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger updateName-info" id="updateName-info"
+                                             style="display: none;"></div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="UserName">UserName</label>
+                                        <input type="text" class="form-control" required="true" id="UserName" name="UserName" placeholder="Enter UserName" value="Yanxia">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NickName">NickName</label>
+                                        <input type="text" class="form-control" required="true" id="NickName" name="NickName" placeholder="Enter NickName" value="Helena">
+                                    </div>
+                                    <!-- /.card-body -->
+                                    <div class="card-footer">
+                                        <button type="button" id="updateNameButton" onsubmit="return false;"
+                                                class="btn btn-danger float-right">Confirm
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div><!-- /.card-body -->
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-primary">
+                            <div class="card-header">
+                                <h3 class="card-title">Password Modification</h3>
+                            </div>
+                            <div class="card-body">
+                                <!-- form start -->
+                                <form id="userPasswordForm">
+                                    <div class="form-group col-sm-8">
+                                        <div class="alert alert-danger updatePassword-info" id="updatePassword-info"
+                                             style="display: none;"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="originalPassword">originalPassword</label>
+                                        <input type="text" class="form-control" required="true" name="originalPassword" id="originalPassword" placeholder="Enter original Password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="NewPassword">newPassword</label>
+                                        <input type="text" class="form-control" onkeyup="PasswordStrength(this.value);" required="true" name="newPassword" id="newPassword" placeholder="Enter new Password" ><span id="msg"></span>
+                                    </div>
+                                    <!-- /.card-footer -->
+                                    <div class="card-footer">
+                                        <button type="button" id="updatePasswordButton" onsubmit="return false;"
+                                                class="btn btn-danger float-right">Confirm
+                                        </button>
+                                    </div>
+                                </form>
+                            </div><!-- -- /.card-body -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+</div>
+
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script th:src="@{/admin/plugins/jQueryUI/jquery-ui.min.js}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.js}"></script>
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+<script th:src="@{/admin/dist/js/profile.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+
+</body>
+</html>
