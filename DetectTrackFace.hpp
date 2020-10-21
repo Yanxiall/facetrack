@@ -49,6 +49,10 @@ class DetectTrackFace{
 	       
 	  void createFacemark();
 	  Mat FaceTrack(Step &ste);
+	  
+	  void createFullBodyDetector();
+	  Mat detectBody(Step &ste, bool bodyTrackEnabled);
+
 	  void loadGrafic(Mat gray, Mat dst);
 	
     private:
@@ -56,6 +60,7 @@ class DetectTrackFace{
 	  Mat graypic,dstpic;
 	  Ptr<Facemark> facemark;
 	  vector<Rect> faces;
+	  vector<Rect> bodies;
 	  CascadeClassifier faceDetector;
 	  float positionX;
 	  float positionY;

@@ -103,7 +103,7 @@ void socket_rasp::WorkThread(SOCKET sockClient){
 //After the handshake the client sends date to server, the server translate the date from the client
 string socket_rasp::translate(SOCKET sockClient)
 {
-    cout << "traslate start"<< endl;
+    //cout << "traslate start"<< endl;
     char clieninfo[2048]= ""; //client Info after handshake
     int len = 0;              
     int point = 0;            
@@ -196,8 +196,7 @@ bool socket_rasp::StartServer()
 	serverSock = socket(AF_INET6, SOCK_STREAM, 0); 
 	if (serverSock < 0)
 	{
-		cout << "socket creation failed, retrying" << endl; 
-        usleep(5000000);
+		cout << "socket creation failed, please retry" << endl; 
 		return false;
 	}
 	cout << "socket creation successfully" << endl; 
@@ -212,8 +211,7 @@ bool socket_rasp::StartServer()
 		(struct sockaddr*)&serverAddr, 
 		sizeof(serverAddr)) < 0)
 	{
-		cout << "Bind error, retrying" << endl; 
-        usleep(5000000);
+		cout << "Bind error, please retry" << endl; 
 	    return false;
 	}
 	cout << "Bind successfully" << endl; 
@@ -247,7 +245,7 @@ unsigned char socket_rasp::ReceiveMessage(Step &control)
 {	
 	
 	string tack = translate(clientSock);
-	cout << "client：" << tack << endl;				
+	//cout << "client：" << tack << endl;				
 	if (tack == "quit")
 	{
 		cout << "shutdown" << endl; 
@@ -258,6 +256,12 @@ unsigned char socket_rasp::ReceiveMessage(Step &control)
 	{
 		cout << "system suspended" << endl; 
 		return 1; // halt, suspend the system, can be reopened by client
+	}
+
+    if (tack == "track")
+	{
+		cout << "active track mode enabled" << endl; 
+		return 3; // halt, suspend the system, can be reopened by client
 	}
 		
 	// control the camera manually        
