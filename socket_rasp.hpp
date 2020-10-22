@@ -39,6 +39,7 @@ class socket_rasp{
 	   void WorkThread(SOCKET sockClient);
 	   string translate(SOCKET sockClient);
 	   void sendimg(const cv::Mat &img);
+	   void sendmsg(string msg);
 	
 	private:
 	  

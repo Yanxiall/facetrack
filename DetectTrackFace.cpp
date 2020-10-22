@@ -19,11 +19,11 @@ void DetectTrackFace::createFullBodyDetector(){
 	cout << "load haarcascade_fullbody.xml finish" <<endl;
 }
 
-Mat DetectTrackFace::detectBody(Step &ste, bool bodyTrackEnabled){
+Mat DetectTrackFace::detectBody(Step &ste, bool bodyTrackEnabled, bool &bodydetected){
 	faceDetector.detectMultiScale(graypic, bodies, 1.1, 3);
 
 	if (bodies.size() > 0)
-	{
+	{   bodydetected = true;
 		for (int gg = 0; gg < bodies.size(); gg++)
 		{
 			rectangle(dstpic, bodies[gg].tl(), bodies[gg].br(), Scalar(0, 0, 255), 2, 8, 0);
@@ -70,6 +70,8 @@ Mat DetectTrackFace::detectBody(Step &ste, bool bodyTrackEnabled){
 	}
 	else {
 		ste.control_active = false;
+		bodydetected = false;
+		
 	}
 
 	return dstpic;

@@ -24,6 +24,7 @@ int main(void)
 	bool startServerSuccess = false;
 	bool startVideoSuccess = true;
 	bool activeTrackMode = false;
+	bool bodydetected = false;
 
 	//d.createFacemark();
 	d.createFullBodyDetector();
@@ -52,7 +53,11 @@ int main(void)
 			cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
 			d.loadGrafic(gray,dst);
 			//img=d.FaceTrack(steFace); 
-			img=d.detectBody(steFace, activeTrackMode); 
+			img=d.detectBody(steFace, activeTrackMode,bodydetected);
+			
+			if(bodydetected == true){
+				s.sendmsg("danger");
+			}
 
 			// process client request
 			userRequest = s.ReceiveMessage(steRemote);
@@ -65,6 +70,7 @@ int main(void)
 			pwmControl.ControlServo(steRemote,steFace);
 
 			//send images to the client 
+			
 			s.sendimg(img);
 
 			if (userRequest == 1 || userRequest == 2) // if client request either suspend or quit

@@ -60,7 +60,10 @@
 		   };
 		   ws.onmessage = function (evt)
 		   {
-			 //alert("pic is received");
+			 
+                         if(evt.data.includes("danger")){
+                            alert("Danger! someone comes into your home!");
+                         }
 			 document.getElementById('image').src='data:image/jpeg;charset=utf-8;base64,'+ evt.data;
 		   }
 		   ws.onclose = function()

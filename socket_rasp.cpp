@@ -304,5 +304,12 @@ void socket_rasp::sendimg(const cv::Mat &img)
     strcpy(temp,imgstr.c_str());
     respondClient(clientSock, temp, imgstr.length(), true);
 }
+ 
+void socket_rasp::sendmsg(const string msg)
+{
+    char temp[msg.length() + 1];
+    strcpy(temp,msg.c_str());
+    respondClient(clientSock, temp, msg.length(), true);
+}
 
 

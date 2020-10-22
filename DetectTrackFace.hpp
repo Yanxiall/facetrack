@@ -51,7 +51,7 @@ class DetectTrackFace{
 	  Mat FaceTrack(Step &ste);
 	  
 	  void createFullBodyDetector();
-	  Mat detectBody(Step &ste, bool bodyTrackEnabled);
+	  Mat detectBody(Step &ste, bool bodyTrackEnabled, bool &bodydetected);
 
 	  void loadGrafic(Mat gray, Mat dst);
 	
