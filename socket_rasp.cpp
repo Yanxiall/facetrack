@@ -263,6 +263,12 @@ unsigned char socket_rasp::ReceiveMessage(Step &control)
 		cout << "active track mode enabled" << endl; 
 		return 3; // halt, suspend the system, can be reopened by client
 	}
+
+    if (tack == "takePhoto")
+	{
+		cout << "take photo request" << endl; 
+		return 4; // halt, suspend the system, can be reopened by client
+	}
 		
 	// control the camera manually        
 	if(tack == "s")// press the key "s", the camera moves down

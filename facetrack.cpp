@@ -8,6 +8,23 @@
 #include "PWM_Control.hpp"
 #include "DetectTrackFace.hpp"
 #include <unistd.h>
+#include <time.h> 
+
+#define BODY_DETECTED_COUNTER_THRESHOLD 10
+
+
+// Get current date/time, format is YYYY-MM-DD.HH:mm:ss
+const std::string currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
+
+    return buf;
+}
 
 int main(void)
 {
@@ -24,7 +41,14 @@ int main(void)
 	bool startServerSuccess = false;
 	bool startVideoSuccess = true;
 	bool activeTrackMode = false;
+
+	// body detection relevant
+	bool candidateBodyDetected = false;
+	bool alertTriggered = false;
 	bool bodydetected = false;
+	bool previousBodyDetected = false;
+	bool savePicTriggered = false;
+	unsigned char bodyDetectedCounter = 0;
 
 	//d.createFacemark();
 	d.createFullBodyDetector();
@@ -52,11 +76,41 @@ int main(void)
 			resize(frame,dst, Size(220, 160)); //change the size of the frame
 			cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
 			d.loadGrafic(gray,dst);
+			savePicTriggered = false;
+
 			//img=d.FaceTrack(steFace); 
 			img=d.detectBody(steFace, activeTrackMode,bodydetected);
 			
-			if(bodydetected == true){
+			if(bodydetected == true && previousBodyDetected == false){
+				
+				bodyDetectedCounter = 0;
+				candidateBodyDetected = true;
+				//savePicTriggered = true;
+			}
+			else if(!bodydetected)
+			{
+				candidateBodyDetected = false;
+				bodyDetectedCounter = 0;
+				alertTriggered = false;
+			}
+			else if (bodydetected && candidateBodyDetected)
+			{
+				if (bodyDetectedCounter < 250)
+				{
+					bodyDetectedCounter ++;
+				}
+			}
+			else{
+				// do nothing
+			}
+
+			previousBodyDetected = bodydetected;
+
+			if ((bodyDetectedCounter > BODY_DETECTED_COUNTER_THRESHOLD) && (!alertTriggered))
+			{
 				s.sendmsg("danger");
+				savePicTriggered = true;
+				alertTriggered = true;
 			}
 
 			// process client request
@@ -66,12 +120,20 @@ int main(void)
 				activeTrackMode = true;
 			}	
 
+			if (userRequest == 4){
+				savePicTriggered = true;
+			}
+
 			// process servo control request
 			pwmControl.ControlServo(steRemote,steFace);
 
 			//send images to the client 
 			
 			s.sendimg(img);
+			if (savePicTriggered)
+			{
+				imwrite("../savePics/" + currentDateTime() + ".png", img); 
+			}
 
 			if (userRequest == 1 || userRequest == 2) // if client request either suspend or quit
 			{
