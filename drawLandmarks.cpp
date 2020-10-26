@@ -32,11 +32,11 @@ void drawLandmarks(Mat &im, vector<Point2f> &landmarks)
     }
     else 
     { 
-		// if the number of the key points are smaller than 68, then we don't know which points belong to which facial parts and we draw a circle for each landmarks. 
-		for(int i = 0; i < landmarks.size(); i++)
-		{
-			circle(im,landmarks[i],3, COLOR, FILLED);
-		}
+       // if the number of the key points are smaller than 68, then we don't know which points belong to which facial parts and we draw a circle for each landmarks. 
+       for(int i = 0; i < landmarks.size(); i++)
+      {
+		circle(im,landmarks[i],3, COLOR, FILLED);
+      }
     }
     
 }

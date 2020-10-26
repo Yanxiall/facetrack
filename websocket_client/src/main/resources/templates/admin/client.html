@@ -59,7 +59,7 @@
 
 		   ws.onopen = function()
 		   {
-			// Web Socket is connected, send data using send()
+			 // Web Socket is connected, send data using send()
 			 alert("connection is made");
 		   };
 		   ws.onmessage = function (evt)
@@ -99,6 +99,8 @@
 		function Photo()
 		{
 		   ws.send("takePhoto");
+		   alert("current photo is saved, please check in log");
+
 		}
 	    function Button_left()
 	    {
