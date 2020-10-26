@@ -2,25 +2,25 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="admin/header::header-fragment"></head>
 <style>
-    .blog-pagination{
+    .pagination{
      margin:50px auto;
     }
 
-.blog-pagination li{
+.pagination li{
     display:inline
 }
-.blog-pagination > li > a{
+.pagination > li > a{
     padding: 6px 12px;
     text-decoration:none;
     background-color: #fff;
     border: 1px solid #ddd;
     margin-left: -4px;
 }
-.blog-pagination > li > a:hover{
+.pagination > li > a:hover{
   background-color:#b9b6b6;
   color:#007bff;
 }
-.blog-pagination > .active > a{
+.pagination > .active > a{
 background-color:#007bff;
 color:#fff;
 }
@@ -47,7 +47,7 @@ color:#fff;
                 </th:block>
             <div class="col-12 page text-center fixed-bottom" >
                 <th:block th:if="${null != DetectPageResult}">
-                    <ul class="blog-pagination">
+                    <ul class="pagination">
                         <li th:class="${DetectPageResult.currPage==1}?'disabled' : ''"><a
                                 th:href="@{${DetectPageResult.currPage==1}?'##':'/page/' + ${DetectPageResult.currPage-1}}">&laquo;</a>
                         </li>
