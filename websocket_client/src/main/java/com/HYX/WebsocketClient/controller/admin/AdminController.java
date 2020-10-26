@@ -124,7 +124,6 @@ public class AdminController {
     }
 
     @GetMapping({"/page/{pageNum}"})
-    @ResponseBody
     public String page(HttpServletRequest request, @PathVariable("pageNum") int pageNum) {
         PageResult DetectPageResult = detectResultService.getImgForIndexPage(pageNum);
         if (DetectPageResult == null) {

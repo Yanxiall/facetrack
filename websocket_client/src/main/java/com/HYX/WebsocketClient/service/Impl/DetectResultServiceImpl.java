@@ -23,7 +23,7 @@ public class DetectResultServiceImpl implements DetectResultService {
         Map params = new HashMap();
         params.put("page", page);
         //4 record of every page
-        params.put("limit", 20);
+        params.put("limit", 8);
         PageUtil pageUtil = new PageUtil(params);
 
         List<photos> photosList = PhotosMapper.findImg(pageUtil);
