@@ -2,12 +2,20 @@ package com.HYX.WebsocketClient.controller.admin;
 
 import com.HYX.WebsocketClient.entity.user;
 import com.HYX.WebsocketClient.service.AdminUserService;
+import com.HYX.WebsocketClient.service.DetectResultService;
+import com.HYX.WebsocketClient.util.PageResult;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 @Controller
@@ -17,6 +25,8 @@ public class AdminController {
 
     @Resource
     private AdminUserService adminUserService;
+    @Resource
+    private DetectResultService detectResultService;
 
     @GetMapping({"/login"})
     public String login() {
@@ -26,6 +36,7 @@ public class AdminController {
     public String client() {
         return "admin/client";
     }
+
 
     @PostMapping(value = "/login")
     public String login(@RequestParam("userName") String userName,
@@ -105,6 +116,22 @@ public class AdminController {
         session.removeAttribute("loginUserId");
         session.removeAttribute("errorMsg");
         return "admin/login";
+    }
+    //detected result webpage
+    @GetMapping({"/result"})
+    public String result(HttpServletRequest request) {
+        return this.page(request, 1);
+    }
+
+    @GetMapping({"/page/{pageNum}"})
+    @ResponseBody
+    public String page(HttpServletRequest request, @PathVariable("pageNum") int pageNum) {
+        PageResult DetectPageResult = detectResultService.getImgForIndexPage(pageNum);
+        if (DetectPageResult == null) {
+            return "error";
+        }
+        request.setAttribute("DetectPageResult", DetectPageResult);
+        return "admin/result";
     }
 
 }

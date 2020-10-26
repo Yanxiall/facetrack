@@ -6,15 +6,11 @@
     <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
-                <img th:src="@{/admin/dist/img/avatar4.jpg}" class="img-circle elevation-2" style="width:20%;" alt="User Image">
+                <img th:src="@{/admin/dist/img/avatar4.jpg}" class="img-circle elevation-2"  alt="User Image">
             </div>
-            <div class="info">
-                <a href="#" class="d-block">Monitoring</a>
+            <div class="info ml-2 mt-1">
+                <a th:href="@{/admin/index}" class="d-block">Monitoring</a>
             </div>
-        </div>
-        <div class="image mt-2">
-            <img th:src="@{/admin/dist/img/avatar4.jpg}" class="img-circle elevation-2" style="width:20%;" alt="User Image">
-            <span class="ml-1 text-light">Helen</span>
         </div>
         <!-- Sidebar Menu -->
         <nav class="mt-4">
@@ -35,6 +31,14 @@
                         <i class="fas fa-desktop"></i>
                         <p>
                             Monitoring Start
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:href="@{/admin/result}" class="nav-link">
+                        <i class="fas fa-images"></i>
+                        <p>
+                            Detected Images
                         </p>
                     </a>
                 </li>

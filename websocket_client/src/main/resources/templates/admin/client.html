@@ -17,9 +17,13 @@
                      <input type="button"  value="quit"  onclick="Quit()"/>
                      <input type="button"  value="suspend"  onclick="Suspend()"/>
                      <input type="button"  value="active track mode"  onclick="Track()"/>
+					 <input type="button"  value="take a photo"  onclick="Photo()"/>
                  </div>
              </div>
              <div class="text-center">
+                 <div class="info" style="display:none;max-width:100%; margin:0 auto;">
+                     <div class="alert alert-danger" style="display:none;max-width:100%; margin:0 auto;"></div>
+                 </div>
                  <img id="image" th:src="@{/admin/dist/img/2.png}" alt="video" class="img-fluid"/>
              </div>
              <div class="keyboard">
@@ -60,11 +64,15 @@
 		   };
 		   ws.onmessage = function (evt)
 		   {
-			 
-                         if(evt.data.includes("danger")){
-                            alert("Danger! someone comes into your home!");
-                         }
-			 document.getElementById('image').src='data:image/jpeg;charset=utf-8;base64,'+ evt.data;
+             if(evt.data.includes("danger")){
+               $('.alert').css({
+                 display:'inline-block',
+                   });
+               $('.alert').text("Alert!Someone comes into your home, please check logs for detail");
+             }
+			 else{
+				document.getElementById('image').src='data:image/jpeg;charset=utf-8;base64,'+ evt.data;
+			 }
 		   }
 		   ws.onclose = function()
 		   {
@@ -87,6 +95,10 @@
 		function Track()
 		{
 		   ws.send("track");
+		}
+		function Photo()
+		{
+		   ws.send("takePhoto");
 		}
 	    function Button_left()
 	    {

@@ -24,4 +24,15 @@ public class ClientWebMvcConfigurer implements org.springframework.web.servlet.c
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(adminLoginInterceptor).addPathPatterns("/admin/**").excludePathPatterns("/admin/login").excludePathPatterns("/admin/dist/**").excludePathPatterns("/admin/plugins/**");
     }
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+        File path = null;
+        try {
+            path = new File(ResourceUtils.getURL("classpath:").getPath());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String gitPath=path.getParentFile().getParentFile().getParent()+File.separator+"log"+File.separator;
+        registry.addResourceHandler("/log/**").addResourceLocations(gitPath);
+    }
 }
