@@ -85,10 +85,10 @@ int DatabaseManager::insertPhoto(string photoUrl)
 	MYSQL_ROW row = mysql_fetch_row(result);
 	mysql_free_result(result);
 
-	cout << "total number of rows: "<< numrows << endl;
+	//cout << "total number of rows: "<< numrows << endl;
 	if (numrows > 0)
 	{
-		cout << "the top file name is: "<< row[0] << endl;
+		//cout << "the top file name is: "<< row[0] << endl;
 		MYSQL_ROW rowIter;
 		while((rowIter = mysql_fetch_row(result)) != NULL )
 		{
@@ -104,15 +104,15 @@ int DatabaseManager::insertPhoto(string photoUrl)
 	{
 		bool removeFromDBSuccess = false;
 		queryMessage = "DELETE FROM log_photos LIMIT 1";
-		cout << "send delete query"<<endl;
+		//cout << "send delete query"<<endl;
 		query_state = mysql_query(connection, queryMessage.c_str());
-		cout << "send delete query finish"<<endl;
+		//cout << "send delete query finish"<<endl;
 		if (query_state == 0)
 		{
 			removeFromDBSuccess = true;
 			cout << "photo number exceed max allowed: " << MAXSTORGEPHOTO << ", the oldest photo is removed from database"<< endl;
 		}
-		cout << "delete query feedback"<<endl;
+		//cout << "delete query feedback"<<endl;
 
 		// delete the photo from hard disk
 		string topPhotoUrl = row[0];
