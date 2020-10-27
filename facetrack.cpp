@@ -7,14 +7,16 @@
 #include "drawLandmarks.hpp"
 #include "PWM_Control.hpp"
 #include "DetectTrackFace.hpp"
+#include "DatabaseManager.hpp"
 #include <unistd.h>
 #include <time.h> 
 
 #define BODY_DETECTED_COUNTER_THRESHOLD 10
 
+using namespace std; 
 
 // Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-const std::string currentDateTime() {
+const string currentDateTime() {
     time_t     now = time(0);
     struct tm  tstruct;
     char       buf[80];
@@ -49,6 +51,14 @@ int main(void)
 	bool previousBodyDetected = false;
 	bool savePicTriggered = false;
 	unsigned char bodyDetectedCounter = 0;
+
+	// database relevant
+	DatabaseManager database;
+	bool dbLoginStatus = false;
+	while (!dbLoginStatus)
+	{
+		dbLoginStatus = database.connectToDB(); // true: login successful, false: login failed
+	}
 
 	//d.createFacemark();
 	d.createFullBodyDetector();
@@ -132,7 +142,11 @@ int main(void)
 			s.sendimg(img);
 			if (savePicTriggered)
 			{
-				imwrite("../savePics/" + currentDateTime() + ".png", img); 
+				string filename = currentDateTime() + ".png";
+				string storeFilePath = "http://www.yanxia.eu:8081/log/" + filename;
+				database.insertPhoto(storeFilePath);
+
+				imwrite("../savePics/" + filename, img); 
 			}
 
 			if (userRequest == 1 || userRequest == 2) // if client request either suspend or quit

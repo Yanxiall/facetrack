@@ -22,7 +22,7 @@ void socket_rasp::getKey(char *request, string clientkey){
     //SHA1 (Secure Hash Algorithm 1) to encrypt the information 
     SHA1  sha;
     unsigned int message_digest[5];
-    cout <<"server_key:"<< server_key << endl;
+    //cout <<"server_key:"<< server_key << endl;
     sha.Reset();
     sha << server_key.c_str();
     sha.Result(message_digest);
@@ -33,7 +33,7 @@ void socket_rasp::getKey(char *request, string clientkey){
     server_key += "\r\n";
     strcat(request, server_key.c_str());
     strcat(request, "Upgrade: websocket\r\n\r\n");
-    cout << "shalserver_key:" << server_key << endl;
+    //cout << "shalserver_key:" << server_key << endl;
 }
 
 //server sends the response
@@ -118,8 +118,9 @@ string socket_rasp::translate(SOCKET sockClient)
         int first = b[point] & 0xFF;
         char opCode = (char)(first & 0x0F);  //get opCode
         if (opCode == 8){
-	    cout<<"socket connection is closed"<<endl;
+	        cout<<"socket connection is closed"<<endl;
             close(sockClient);
+            return "unexpectedDisconnection";
         }
         //get the second byte 
         first = b[++point];
@@ -199,7 +200,7 @@ bool socket_rasp::StartServer()
 		cout << "socket creation failed, please retry" << endl; 
 		return false;
 	}
-	cout << "socket creation successfully" << endl; 
+	//cout << "socket creation successfully" << endl; 
     //bind IP and port
 	memset(&serverAddr, 0, sizeof(serverAddr)); 
 	serverAddr.sin6_family  = AF_INET6; 
@@ -214,7 +215,7 @@ bool socket_rasp::StartServer()
 		cout << "Bind error, please retry" << endl; 
 	    return false;
 	}
-	cout << "Bind successfully" << endl; 
+	//cout << "Bind successfully" << endl; 
 	
    //listen
 	if (listen(serverSock, 10) == -1)
@@ -238,7 +239,7 @@ void socket_rasp::listenClient()
 void socket_rasp::closeClient()
 {
     close(clientSock);
-    cout << "****connection is closed****" << endl; 
+    cout << "connection is closed with client: " << clientSock << endl; 
 }
 
 unsigned char socket_rasp::ReceiveMessage(Step &control)
@@ -252,7 +253,7 @@ unsigned char socket_rasp::ReceiveMessage(Step &control)
 		return 2; // quit, shutdown the remote monitor system
 	}
 
-    if (tack == "halt")
+    if (tack == "halt" || tack == "unexpectedDisconnection")
 	{
 		cout << "system suspended" << endl; 
 		return 1; // halt, suspend the system, can be reopened by client
