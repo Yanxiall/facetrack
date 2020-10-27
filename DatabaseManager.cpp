@@ -2,6 +2,7 @@
 
 #include <termios.h>
 #include <unistd.h>
+#include <stdio.h>
 
 int DatabaseManager::getch() {
     int ch;
@@ -58,10 +59,8 @@ bool DatabaseManager::connectToDB()
     mysql_init(&mysql);
 	string password = getpass("Please enter the password: ", true);
 
-	// the three zeros are: Which port to connect to, which socket to connect to 
-	// and what client flags to use.  unless you're changing the defaults you only need to put 0 here
     connection = mysql_real_connect(&mysql, HOST, USER, password.c_str(), DB, 3306, 0, 0); 
-	// Report error if failed to connect to database
+
     if (connection == NULL) {
         cout << mysql_error(&mysql) << endl;
 		cout << "password is incorrect, please retry" << endl;
@@ -77,8 +76,69 @@ bool DatabaseManager::connectToDB()
 
 int DatabaseManager::insertPhoto(string photoUrl)
 {
-	string queryMessage = "insert into log_photos(img_url) values('" + photoUrl + "')";
-	//cout << "query =  " + queryMessage << endl;
+	// get current database table
+	string queryMessage = "SELECT img_url FROM log_photos";
+	query_state = mysql_query(connection, queryMessage.c_str());
+
+	result = mysql_store_result(connection);
+    unsigned int numrows = mysql_num_rows(result);
+	MYSQL_ROW row = mysql_fetch_row(result);
+	mysql_free_result(result);
+
+	cout << "total number of rows: "<< numrows << endl;
+	if (numrows > 0)
+	{
+		cout << "the top file name is: "<< row[0] << endl;
+		MYSQL_ROW rowIter;
+		while((rowIter = mysql_fetch_row(result)) != NULL )
+		{
+			if (rowIter[0] == photoUrl)
+			{
+				cout << "take multiple photos within 1 second, photo save abort"<< endl;
+				return 0;
+			}
+		}
+	}
+
+	if (numrows >= MAXSTORGEPHOTO)
+	{
+		bool removeFromDBSuccess = false;
+		queryMessage = "DELETE FROM log_photos LIMIT 1";
+		cout << "send delete query"<<endl;
+		query_state = mysql_query(connection, queryMessage.c_str());
+		cout << "send delete query finish"<<endl;
+		if (query_state == 0)
+		{
+			removeFromDBSuccess = true;
+			cout << "photo number exceed max allowed: " << MAXSTORGEPHOTO << ", the oldest photo is removed from database"<< endl;
+		}
+		cout << "delete query feedback"<<endl;
+
+		// delete the photo from hard disk
+		string topPhotoUrl = row[0];
+
+		size_t pos = topPhotoUrl.find("2020-");      // position of "live" in str
+  		string filename = topPhotoUrl.substr(pos);  
+
+		string filePathToBeDeteleted = "../savePics/" + filename;
+
+		if (removeFromDBSuccess)
+		{
+			if(remove(filePathToBeDeteleted.c_str()) != 0 )
+			{
+				cout << "error when deleting "<<filePathToBeDeteleted <<endl;
+			}
+			else
+			{
+				cout << "File is deleted "<<filePathToBeDeteleted <<endl;
+			}
+		}
+
+	}
+
+	// insert a new photourl	
+	queryMessage = "insert into log_photos(img_url) values('" + photoUrl + "')";
+	
 	query_state = mysql_query(connection, queryMessage.c_str());
 
 	if (query_state == 0)
