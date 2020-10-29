@@ -34,7 +34,7 @@ $ make
 
 4. Open the web client and login; 
 
-![Usage example](http://www.yanxia.eu/upload/2020-10-28_16h59_45.gif)
+![Usage example](usage-example.gif)
 
 
 ## What you need
