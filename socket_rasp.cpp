@@ -284,13 +284,13 @@ unsigned char socket_rasp::ReceiveMessage(Step &control)
 		control.step_down = 0;			
 		control.control_active = true;				
 	}
-	else if(tack == "a") // press the key "a", the camera moves left
+	else if(tack == "d") // press the key "a", the camera moves left
 	{
 		control.step_down = -1;
 		control.step_up = 0;
 		control.control_active = true;				
 	}
-	else if(tack == "d")// press the key "d", the camera moves right
+	else if(tack == "a")// press the key "d", the camera moves right
 	{
 		control.step_down = 1;
 		control.step_up = 0;
