@@ -1,18 +1,13 @@
-  
-
 ## Introduction
 
-Facetrack is a project based on Raspberry Pi 3 Model B+ and  C++ language development. It is used for remote surveillance.  The project is under maintenance. Currently available version is v1.0. 
+This project provides an intelligent remote surveillance system by using raspberry pi 3b+ as domain controller with servo driven 2 axis camera. With this system you can monitor your home at any place with a web based client that applicable for both phone and pc. The system also provides an intelligent operation mode that tracks detected person automatically by using AI algorithm and notify the system admin.
 
 ## Features
 
--  Detect faces and draw  face marks ;
-
--  The camera follows the tracked face;
-
-- Remote surveillance through computer or mobile phone;
-
-- Remote control the camera so that it can move upwards, downwards, left and right.
+- Video real time streaming.
+- Remote control of the camera.
+- Detected person automatic tracking and notification.
+- Detected person photos saving and Photo display on web client.
 
 ## Setup
 
@@ -37,21 +32,10 @@ $ make
    $ sudo ./facetrack
    ```
 
-4. Open the file ws.html and input the IP address of Raspberry Pi, press the button "connect"; 
+4. Open the web client and login; 
 
-5. Press the buttons "up", "down", "left", "right" to control the movement of the servo;
+![Usage example](http://www.yanxia.eu/upload/2020-10-28_16h59_45.gif)
 
-6. Face the camera to test the function of face tracking.
-
-## To Do
-
-- Improve the performance of face tracking and remote control. 
-
--  Identify persons, which were already registered in the system and showed in the camera view. 
-
-- Track a person’s face and make a photo if the person is not registered in system. 
-
-- Send the photo to host’s phone once an unregistered person is found.
 
 ## What you need
 
@@ -59,7 +43,7 @@ $ make
 
 - Raspberry Pi 3 Model B+;
 
-- A camera with two servos (one servo controls the camera moving up and down, another controls the camera moving left and right )  ;
+- A camera with 2 axis servos (one servo controls the camera moving up and down, another controls the camera moving left and right )  ;
 
 #### Software
 
@@ -70,16 +54,9 @@ If you want to operate the Raspberry pi in a computer or mobile phone, then you 
 - Opencv 3.4.1
 - Threads 
 - Wiring Pi
+- libmariadb-dev
 
 ## References
 
 - https://github.com/kurnianggoro/GSOC2017
-
-  
-
-
-
-
-
-
-
+- https://github.com/opencv/opencv/tree/master/data/haarcascades
