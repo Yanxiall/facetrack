@@ -26,16 +26,23 @@ $ make
 
 2. Connect the two servos to the GPIO interface of the raspberry pi ( in this project：GPIO.1 and GPIO.24 for PWM output )；
 
-3. Open the command and input
+3. Run program: Open the command and input
 
    ```
-   $ sudo ./facetrack
+   $ sudo ./src/facetrack
    ```
 
 4. Open the web client and login; 
 
 ![Usage example](usage-example.gif)
 
+
+## Unit test
+- Google test is used for unit test, to run unit test, run command:
+
+   ```
+   $  ./test/facetrackTest
+   ```
 
 ## What you need
 
@@ -55,6 +62,7 @@ If you want to operate the Raspberry pi in a computer or mobile phone, then you 
 - Threads 
 - Wiring Pi
 - libmariadb-dev
+- libgtest-dev
 
 ## References
 
