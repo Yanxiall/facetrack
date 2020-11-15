@@ -9,30 +9,31 @@
 #include "DetectTrackFace.hpp"
 #include "DatabaseManager.hpp"
 #include <unistd.h>
-#include <time.h> 
+#include <time.h>
 
 #define BODY_DETECTED_COUNTER_THRESHOLD 10
 
-using namespace std; 
+using namespace std;
 
 // Get current date/time, format is YYYY-MM-DD.HH:mm:ss
-const string currentDateTime() {
-    time_t     now = time(0);
-    struct tm  tstruct;
-    char       buf[80];
-    tstruct = *localtime(&now);
-    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
-    // for more information about date/time format
-    strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
+const string currentDateTime()
+{
+	time_t now = time(0);
+	struct tm tstruct;
+	char buf[80];
+	tstruct = *localtime(&now);
+	// Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+	// for more information about date/time format
+	strftime(buf, sizeof(buf), "%Y-%m-%d-%X", &tstruct);
 
-    return buf;
+	return buf;
 }
 
 int main(void)
 {
-	//set PWM 
-	Mat frame,gray,dst, img;
-	
+	//set PWM
+	Mat frame, gray, dst, img;
+
 	DetectTrackFace d;
 	socket_rasp s;
 	PWM_Control pwmControl;
@@ -62,42 +63,43 @@ int main(void)
 
 	//d.createFacemark();
 	d.createFullBodyDetector();
-	
+
 	startServerSuccess = s.StartServer();
 
-	while(startServerSuccess)
+	while (startServerSuccess)
 	{
 		s.listenClient();
 		activeTrackMode = false;
 
-		VideoCapture cap(0);//0:call raspberry camera
+		VideoCapture cap(0); //0:call raspberry camera
 		startVideoSuccess = true;
 
-		if(!cap.isOpened())
+		if (!cap.isOpened())
 		{
-			cout<<"can't open this camera"<<endl;
+			cout << "can't open this camera" << endl;
 			startVideoSuccess = false;
-		}	
-		
-		while(startVideoSuccess)
-		{   
+		}
+
+		while (startVideoSuccess)
+		{
 			// video process
-			cap>>frame;
-			resize(frame,dst, Size(220, 160)); //change the size of the frame
-			cvtColor(dst,gray,COLOR_BGR2GRAY);//convert to gray		
-			d.loadGrafic(gray,dst);
+			cap >> frame;
+			resize(frame, dst, Size(220, 160));	 //change the size of the frame
+			cvtColor(dst, gray, COLOR_BGR2GRAY); //convert to gray
+			d.loadGrafic(gray, dst);
 			savePicTriggered = false;
 
-			//img=d.FaceTrack(steFace); 
-			img=d.detectBody(steFace, activeTrackMode,bodydetected);
-			
-			if(bodydetected == true && previousBodyDetected == false){
-				
+			//img=d.FaceTrack(steFace);
+			img = d.detectBody(steFace, activeTrackMode, bodydetected);
+
+			if (bodydetected == true && previousBodyDetected == false)
+			{
+
 				bodyDetectedCounter = 0;
 				candidateBodyDetected = true;
 				//savePicTriggered = true;
 			}
-			else if(!bodydetected)
+			else if (!bodydetected)
 			{
 				candidateBodyDetected = false;
 				bodyDetectedCounter = 0;
@@ -107,10 +109,11 @@ int main(void)
 			{
 				if (bodyDetectedCounter < 250)
 				{
-					bodyDetectedCounter ++;
+					bodyDetectedCounter++;
 				}
 			}
-			else{
+			else
+			{
 				// do nothing
 			}
 
@@ -126,19 +129,21 @@ int main(void)
 			// process client request
 			userRequest = s.ReceiveMessage(steRemote);
 
-			if (userRequest == 3){
+			if (userRequest == 3)
+			{
 				activeTrackMode = true;
-			}	
+			}
 
-			if (userRequest == 4){
+			if (userRequest == 4)
+			{
 				savePicTriggered = true;
 			}
 
 			// process servo control request
-			pwmControl.ControlServo(steRemote,steFace);
+			pwmControl.ControlServo(steRemote, steFace);
 
-			//send images to the client 
-			
+			//send images to the client
+
 			s.sendimg(img);
 			if (savePicTriggered)
 			{
@@ -146,7 +151,7 @@ int main(void)
 				string storeFilePath = "http://www.yanxia.eu:8081/log/" + filename;
 				database.insertPhoto(storeFilePath);
 
-				imwrite("../savePics/" + filename, img); 
+				imwrite("../savePics/" + filename, img);
 			}
 
 			if (userRequest == 1 || userRequest == 2) // if client request either suspend or quit
